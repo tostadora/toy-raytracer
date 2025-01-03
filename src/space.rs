@@ -1,4 +1,4 @@
-use std::ops;
+use auto_ops::*;
 
 #[derive(Debug)]
 pub struct Vec3 {
@@ -52,38 +52,34 @@ pub fn cross (a: &Vec3, b: &Vec3) -> Vec3 {
           z: a.x() * b.y() - a.y() * b.x(),}
 }
 
-impl_op!(+ |a: &Vec3, b: &Vec3| -> Vec3 { Vec3 {x: a.x() + b.x(),
+impl_op_ex!(+ |a: &Vec3, b: &Vec3| -> Vec3 { Vec3 {x: a.x() + b.x(),
                                                 y: a.y() + b.y(),
                                                 z: a.z() + b.z(),}
                                                 });
-impl_op!(- |a: &Vec3, b: &Vec3| -> Vec3 { Vec3 {x: a.x() - b.x(),
+impl_op_ex!(- |a: &Vec3, b: &Vec3| -> Vec3 { Vec3 {x: a.x() - b.x(),
                                                 y: a.y() - b.y(),
                                                 z: a.z() - b.z(),}
                                                 });
-impl_op!(* |a: &Vec3, b: &Vec3| -> Vec3 { Vec3 {x: a.x() * b.x(),
+impl_op_ex!(* |a: &Vec3, b: &Vec3| -> Vec3 { Vec3 {x: a.x() * b.x(),
                                                 y: a.y() * b.y(),
                                                 z: a.z() * b.z(),}
                                                 });
-impl_op!(* |a: &Vec3, b: f64| -> Vec3 { Vec3 {x: a.x() * b,
+impl_op_ex!(* |a: &Vec3, b: f64| -> Vec3 { Vec3 {x: a.x() * b,
                                                 y: a.y() * b,
                                                 z: a.z() * b,}
                                                 });
-impl_op!(/ |a: &Vec3, b: f64| -> Vec3 { Vec3 {x: a.x() / b,
+impl_op_ex!(/ |a: &Vec3, b: f64| -> Vec3 { Vec3 {x: a.x() / b,
                                                 y: a.y() / b,
                                                 z: a.z() /b,}
                                                 });
-impl_op!(+= |a: &mut Vec3, b: Vec3|    {       a.x += b.x();
+impl_op_ex!(+= |a: &mut Vec3, b: &Vec3|    {       a.x += b.x();
                                                 a.y += b.y();
                                                 a.z += b.z();
                                                 });
-impl_op!(+= |a: &mut Vec3, b: &Vec3|    {       a.x += b.x();
-                                                a.y += b.y();
-                                                a.z += b.z();
-                                                });
-impl_op!(*= |a: &mut Vec3, b: f64|    {       a.x *= b;
+impl_op_ex!(*= |a: &mut Vec3, b: f64|    {       a.x *= b;
                                                 a.y *= b;
                                                 a.z *= b;
                                                 });
-impl_op!(/= |a: &mut Vec3, b: f64|    {       *a *= 1.0/b;
+impl_op_ex!(/= |a: &mut Vec3, b: f64|    {       *a *= 1.0/b;
                                                 });
 pub type Point3 = Vec3;
