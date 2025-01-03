@@ -86,4 +86,4 @@ impl_op!(*= |a: &mut Vec3, b: f64|    {       a.x *= b;
                                                 });
 impl_op!(/= |a: &mut Vec3, b: f64|    {       *a *= 1.0/b;
                                                 });
-type Point3 = Vec3;
+pub type Point3 = Vec3;
