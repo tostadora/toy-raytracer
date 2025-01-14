@@ -3,14 +3,28 @@ mod color;
 mod ray;
 mod hittable;
 mod sphere;
+mod world;
 
 use std::io::Write;
 use space::{Vec3, Point3};
 use color::Color;
 use ray::Ray;
+use sphere::Sphere;
+use world::World;
+use hittable::Hittable;
 
-fn ray_color (r: &Ray) -> Color {
-    Color::new(0.0, 0.0, 0.0)
+use std::f64::consts::PI;
+
+fn ray_color (r: &Ray, w: &World) -> Color {
+
+    match w.hit(r, 0.0, f64::INFINITY) {
+        Some(hit) => Color::new(0.5 * (hit.normal.x() + 1.0), 0.5 * (hit.normal.y() + 1.0), 0.5 * (hit.normal.z() + 1.0)),
+        None => {
+                    let unit_direction = r.direction().unit_vector();
+                    let a = 0.5 * (unit_direction.y() + 1.0);
+                    Color::new(1.0-a+a*0.5, 1.0-a+a*0.7, 1.0-a+a*1.0)
+        }
+    }
 }
 
 fn main() {
@@ -18,6 +32,12 @@ fn main() {
 
     let image_width: usize = 400;
     let image_height: usize = if ((image_width as f64 * aspect_ratio) as usize) < 1 { 1 } else { (image_width as f64 / aspect_ratio) as usize };
+
+    // World
+
+    let mut world: World = vec!();
+    world.push(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5));
+    world.push(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0));
 
     // Camera
     
@@ -47,7 +67,8 @@ fn main() {
 
             let ray = Ray::new(camera_center.clone(), ray_direction);
 
-            ray.color().write_color();
+            let color = ray_color(&ray, &world);
+            color.write_color();
         }
     }
     eprintln!("\rDone");
