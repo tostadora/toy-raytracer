@@ -1,5 +1,6 @@
 use crate::Ray;
 use crate::space::{Vec3, Point3};
+use crate::interval::Interval;
 
 #[derive(PartialEq)]
 pub enum Face {
@@ -33,6 +34,6 @@ impl HitRecord {
 
 pub trait Hittable {
 
-    fn hit(&self, ray: &Ray, ray_tmin: f64, ray_tmax: f64) -> Option<HitRecord>;
+    fn hit(&self, ray: &Ray, ray_t: Interval) -> Option<HitRecord>;
 
 }

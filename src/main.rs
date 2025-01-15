@@ -4,6 +4,7 @@ mod ray;
 mod hittable;
 mod sphere;
 mod world;
+mod interval;
 
 use std::io::Write;
 use space::{Vec3, Point3};
@@ -12,12 +13,13 @@ use ray::Ray;
 use sphere::Sphere;
 use world::World;
 use hittable::Hittable;
+use interval::Interval;
 
 use std::f64::consts::PI;
 
 fn ray_color (r: &Ray, w: &World) -> Color {
 
-    match w.hit(r, 0.0, f64::INFINITY) {
+    match w.hit(r, Interval::new(0.0, f64::INFINITY)) {
         Some(hit) => Color::new(0.5 * (hit.normal.x() + 1.0), 0.5 * (hit.normal.y() + 1.0), 0.5 * (hit.normal.z() + 1.0)),
         None => {
                     let unit_direction = r.direction().unit_vector();

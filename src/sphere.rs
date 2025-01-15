@@ -1,6 +1,7 @@
 use crate::space::{Point3, Vec3};
 use crate::hittable::*;
 use crate::Ray;
+use crate::interval::Interval;
 
 pub struct Sphere {
     pub center: Point3,
@@ -21,7 +22,7 @@ impl Sphere {
 impl Hittable for Sphere {
 
 
-    fn hit(&self, ray: &Ray, ray_tmin: f64, ray_tmax: f64) -> Option<HitRecord> {
+    fn hit(&self, ray: &Ray, ray_t: Interval) -> Option<HitRecord> {
         let oc = &self.center - ray.origin();
 
         let a = ray.direction().length_squared();
@@ -35,9 +36,9 @@ impl Hittable for Sphere {
         let sqrtd = discriminant.sqrt();
         let root = (h - sqrtd) / a;
 
-        if root <= ray_tmin || root >= ray_tmax {
+        if ray_t.surrounds(root) == false {
             let root = (h + sqrtd) / a;
-            if root <= ray_tmin || root >= ray_tmax { return None; }
+            if ray_t.surrounds(root) == false { return None; }
         }
 
         let outward_normal = (ray.at(root) - self.center.clone()) / self.radius;
