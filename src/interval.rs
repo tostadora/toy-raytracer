@@ -21,4 +21,10 @@ impl Interval {
     pub fn size(&self) -> f64 {
         self.right - self.left
     }
+
+    pub fn clamp(&self, x: f64) -> f64 {
+        if x < self.left { self.left }
+        else if x > self.right { self.right }
+        else { x }
+    }
 }
