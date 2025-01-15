@@ -1,6 +1,6 @@
 use crate::space::{Point3, Vec3};
 use crate::hittable::*;
-use crate::Ray;
+use crate::ray::Ray;
 use crate::interval::Interval;
 
 pub struct Sphere {

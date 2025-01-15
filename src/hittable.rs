@@ -1,4 +1,4 @@
-use crate::Ray;
+use crate::ray::Ray;
 use crate::space::{Vec3, Point3};
 use crate::interval::Interval;
 

@@ -1,5 +1,5 @@
 use crate::space::{Vec3, Point3};
-use crate::Color;
+use crate::color::Color;
 
 pub struct Ray {
     origin: Point3,
