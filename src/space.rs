@@ -1,4 +1,5 @@
 use std::ops::{Add, Div, Mul, Neg, Sub};
+use rand;
 
 #[derive(Debug, Clone)]
 pub struct Vec3 {
@@ -41,6 +42,21 @@ impl Vec3 {
         self / self.length()
     }
 
+    pub fn random_unit_vector() -> Vec3 {
+        loop {
+            let p = Vec3::random();
+            let length = p.length_squared();
+            if f64::MIN < length && length < 1.0 { return p.unit_vector(); }
+        }
+    }
+
+    pub fn random_on_hemisphere(&self) -> Vec3 {
+        let on_unit_sphere = Vec3::random_unit_vector();
+
+        if Vec3::dot(&on_unit_sphere, self) > 0.0 { on_unit_sphere }
+        else { -on_unit_sphere }
+    }
+
     pub fn dot (a: &Vec3, b: &Vec3) -> f64 {
         a.x() * b.x() + a.y() * b.y() + a.z() * b.z()
     }
@@ -50,6 +66,15 @@ impl Vec3 {
               y: a.z() * b.x() - a.x() * b.z(),
               z: a.x() * b.y() - a.y() * b.x(),}
     }
+
+    pub fn random () -> Vec3 {
+        Vec3::new(rand::random::<f64>(), rand::random::<f64>(), rand::random::<f64>())
+    }
+
+    pub fn random_bounded (min: f64, max: f64) -> Vec3 {
+        Vec3::new(rand::random::<f64>(), rand::random::<f64>(), rand::random::<f64>()) * (max-min) + Vec3::new(min, min, min)
+    }
+
 
 }
 
