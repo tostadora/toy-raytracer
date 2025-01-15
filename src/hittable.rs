@@ -1,5 +1,5 @@
 use crate::ray::Ray;
-use crate::space::{Vec3, Point3};
+use crate::space::Vec3;
 use crate::interval::Interval;
 
 #[derive(PartialEq)]
@@ -9,7 +9,6 @@ pub enum Face {
 }
 
 pub struct HitRecord {
-    pub p: Point3,
     pub normal: Vec3,
     pub t: f64,
     pub face: Face,
@@ -17,9 +16,8 @@ pub struct HitRecord {
 
 impl HitRecord {
 
-    pub fn new(p: Point3, normal: Vec3, t: f64, face: Face) -> HitRecord {
+    pub fn new(normal: Vec3, t: f64, face: Face) -> HitRecord {
         HitRecord { 
-            p: p,
             normal: normal,
             t: t,
             face: face,
