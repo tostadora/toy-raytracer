@@ -75,7 +75,11 @@ impl Vec3 {
         Vec3::new(rand::random::<f64>(), rand::random::<f64>(), rand::random::<f64>()) * (max-min) + Vec3::new(min, min, min)
     }
 
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-8;
 
+        (self.x.abs() < s) && (self.y.abs() < s) && (self.z() < s)
+    }
 }
 
 impl Add for Vec3 {
