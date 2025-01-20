@@ -42,6 +42,10 @@ impl Vec3 {
         self / self.length()
     }
 
+    pub fn inverted(&self) -> Vec3 {
+        Vec3::new(-self.x, -self.y, -self.z)
+    }
+
     pub fn random_unit_vector() -> Vec3 {
         loop {
             let p = Vec3::random();
@@ -79,6 +83,18 @@ impl Vec3 {
         let s = 1e-8;
 
         (self.x.abs() < s) && (self.y.abs() < s) && (self.z() < s)
+    }
+
+    pub fn reflect(&self, n: &Vec3) -> Vec3 {
+        self - &(2.0 * Vec3::dot(self, n) * n)
+    }
+
+    pub fn refract(&self, n: &Vec3, etai_over_etat: f64) -> Vec3 {
+        let cos_theta = Vec3::dot(&self.inverted(), &n).min(1.0);
+        let r_out_perp = etai_over_etat * (self + &(cos_theta * n));
+        let r_out_parallel = n * -(1.0 - r_out_perp.length_squared()).abs().sqrt();
+
+        r_out_perp + r_out_parallel.inverted()
     }
 }
 

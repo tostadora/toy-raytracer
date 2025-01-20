@@ -3,8 +3,10 @@ use crate::interval::Interval;
 
 pub type Color = Vec3;
 
+use image::Rgb;
+
 impl Color { 
-    pub fn write_color(self: &Self) {
+    pub fn write_color(self: &Self) -> Rgb<u8> {
         
         let intensity = Interval::new(0.000, 0.999);
 
@@ -12,7 +14,8 @@ impl Color {
         let g = intensity.clamp(Self::linear_to_gamma(self.y())) * 256.0;
         let b = intensity.clamp(Self::linear_to_gamma(self.z())) * 256.0;
 
-        println!("{} {} {}", r.floor(), g.floor(), b.floor());
+        Rgb ([r.floor() as u8, g.floor() as u8, b.floor() as u8])
+
     }
 
     fn linear_to_gamma(value: f64) -> f64 {

@@ -8,6 +8,7 @@ use crate::interval::Interval;
 use std::io::Write;
 
 use rand;
+use image;
 
 pub struct Camera {
     pub aspect_ratio: f64,
@@ -43,8 +44,12 @@ impl Camera {
     
         match w.hit(r, Interval::new(0.001, f64::INFINITY)) {
             Some(hit) => {
-                        
-                        0.5 * Self::ray_color(&Ray::new(hit.p, Vec3::random_on_hemisphere(&(hit.normal + Vec3::random_unit_vector()))), w, invocation_count - 1)
+                        match hit.material.scatter(r, &hit) {
+                            Some((color, ray)) => {
+                                color * Self::ray_color(&ray, w, invocation_count - 1)
+                            },
+                            None => Color::new(0.0, 0.0, 0.0),
+                        }
             },
             None => {
                         let unit_direction = r.direction().unit_vector();
@@ -58,7 +63,7 @@ impl Camera {
         self.image_height = if ((self.image_width as f64 * self.aspect_ratio) as usize) < 1 { 1 } else { (self.image_width as f64 / self.aspect_ratio) as usize };
         self.center = Point3::new(0.0, 0.0, 0.0);
     
-        let focal_length: f64 = 2.0;
+        let focal_length: f64 = 1.0;
         let viewport_height: f64 = 2.0;
         let viewport_width = viewport_height * (self.image_width as f64 / self.image_height as f64);
     
@@ -77,8 +82,9 @@ impl Camera {
     pub fn render(&mut self, world: &World) {
         self.initialize();
 
+        let mut img = image::RgbImage::new(self.image_width as u32, self.image_height as u32);
+
         eprintln!("\r{} {}", self.image_height, self.image_width);
-        println!("P3\n{} {}\n255\n", self.image_width, self.image_height);
         for j in 0..self.image_height {
             eprint!("\rScanlines remaining: {} ", self.image_height - j);
             for i in 0..self.image_width {
@@ -90,11 +96,13 @@ impl Camera {
                 }
 
                 color = color * (1.0 / self.samples_per_pixel as f64);
-                color.write_color();
+                img.put_pixel(i as u32, j as u32, color.write_color());
             }
         }
         eprintln!("\rDone");
         let _ = std::io::stderr().flush();
+
+        img.save("img.png").unwrap();
     }
 
     fn get_ray(&self, i: usize, j: usize) -> Ray {
