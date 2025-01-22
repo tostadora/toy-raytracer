@@ -85,17 +85,18 @@ impl Vec3 {
         (self.x.abs() < s) && (self.y.abs() < s) && (self.z() < s)
     }
 
-    pub fn reflect(&self, n: &Vec3) -> Vec3 {
-        self - &(2.0 * Vec3::dot(self, n) * n)
+    pub fn reflect(uv: &Vec3, n: &Vec3) -> Vec3 {
+        uv + &(-2.0 * Vec3::dot(uv, n) * n)
     }
 
-    pub fn refract(&self, n: &Vec3, etai_over_etat: f64) -> Vec3 {
-        let cos_theta = Vec3::dot(&self.inverted(), &n).min(1.0);
-        let r_out_perp = etai_over_etat * (self + &(cos_theta * n));
-        let r_out_parallel = n * -(1.0 - r_out_perp.length_squared()).abs().sqrt();
+    pub fn refract(uv: &Vec3, n: &Vec3, etai_over_etat: f64) -> Vec3 {
+        let cos_theta = Vec3::dot(&uv.inverted(), &n).min(1.0);
+        let r_out_perp = etai_over_etat * (uv + &(cos_theta * n));
+        let r_out_parallel = n * -1.0 * (1.0 - r_out_perp.length_squared()).abs().sqrt();
 
-        r_out_perp + r_out_parallel.inverted()
+        r_out_perp + r_out_parallel
     }
+
 }
 
 impl Add for Vec3 {
@@ -261,3 +262,151 @@ impl PartialEq for Vec3 {
 }
 
 pub type Point3 = Vec3;
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn test_dot_01() {
+        let u = Vec3::new(1.0, 2.0, -3.0);
+        let v = Vec3::new(-1.0, 9.0, -4.0);
+        let expected = 29.0; 
+
+        assert_eq!(Vec3::dot(&u, &v), expected);
+    }
+    
+    #[test]
+    fn test_dot_02() {
+        let u = Vec3::new(1.0, 2.0, 3.0);
+        let v = Vec3::new(4.0, 5.0, 6.0);
+        let expected = 32.0; 
+
+        assert_eq!(Vec3::dot(&u, &v), expected);
+    }
+    
+    #[test]
+    fn test_dot_03() {
+        let u = Vec3::new(7.0, 8.0, 9.0);
+        let v = Vec3::new(10.0, 11.0, 12.0);
+        let expected = 266.0; 
+
+        assert_eq!(Vec3::dot(&u, &v), expected);
+    }
+    
+    #[test]
+    fn test_dot_04() {
+        let u = Vec3::new(2.0, -3.0, 4.0);
+        let v = Vec3::new(-1.0, 5.0, -6.0);
+        let expected = -41.0; 
+
+        assert_eq!(Vec3::dot(&u, &v), expected);
+    }
+    
+    #[test]
+    fn test_dot_05() {
+        let u = Vec3::new(0.0, 0.0, 0.0);
+        let v = Vec3::new(1.0, 2.0, 3.0);
+        let expected = 0.0; 
+
+        assert_eq!(Vec3::dot(&u, &v), expected);
+    }
+    
+    #[test]
+    fn test_dot_06() {
+        let u = Vec3::new(1.0, -1.0, 1.0);
+        let v = Vec3::new(-1.0, 1.0, -1.0);
+        let expected = -3.0; 
+
+        assert_eq!(Vec3::dot(&u, &v), expected);
+    }
+    
+    #[test]
+    fn test_dot_07() {
+        let u = Vec3::new(-2.0, -4.0, -6.0);
+        let v = Vec3::new(3.0, 6.0, 9.0);
+        let expected = -84.0; 
+
+        assert_eq!(Vec3::dot(&u, &v), expected);
+    }
+    
+    #[test]
+    fn test_dot_08() {
+        let u = Vec3::new(1.0, 0.0, -1.0);
+        let v = Vec3::new(0.0, 1.0, 0.0);
+        let expected = 0.0; 
+
+        assert_eq!(Vec3::dot(&u, &v), expected);
+    }
+    
+    #[test]
+    fn test_dot_09() {
+        let u = Vec3::new(5.0, 5.0, 5.0);
+        let v = Vec3::new(1.0, 2.0, 3.0);
+        let expected = 30.0; 
+
+        assert_eq!(Vec3::dot(&u, &v), expected);
+    }
+    
+    #[test]
+    fn test_dot_10() {
+        let u = Vec3::new(-3.0, -2.0, -1.0);
+        let v = Vec3::new(1.0, 0.0, -1.0);
+        let expected = -2.0; 
+
+        assert_eq!(Vec3::dot(&u, &v), expected);
+    }
+
+    #[test]
+    fn test_reflect() {
+
+        let data: [(Vec3, Vec3, Vec3); 10] = [
+            (Vec3::new(1.0, 2.0, 3.0), Vec3::new(1.0, 0.0, 0.0), Vec3::new(-1.0, 2.0, 3.0)),
+            (Vec3::new(-4.0, 5.0, -6.0), Vec3::new(0.0, 1.0, 0.0), Vec3::new(-4.0, -5.0, -6.0)),
+            (Vec3::new(7.0, -8.0, 9.0), Vec3::new(0.0, 0.0, 1.0), Vec3::new(7.0, -8.0, -9.0)),
+            (Vec3::new(-1.0, 2.0, -3.0), Vec3::new(1.0, 1.0, 1.0), Vec3::new(3.0, 6.0, 1.0)),
+            (Vec3::new(4.0, -5.0, 6.0), Vec3::new(1.0, -1.0, 0.0), Vec3::new(-14.0, 13.0, 6.0)),
+            (Vec3::new(0.0, 3.0, -7.0), Vec3::new(1.0, 1.0, 1.0), Vec3::new(8.0, 11.0, 1.0)),
+            (Vec3::new(2.0, -2.0, 2.0), Vec3::new(1.0, 0.0, 1.0), Vec3::new(-6.0, -2.0, -6.0)),
+            (Vec3::new(3.0, 0.0, -3.0), Vec3::new(0.0, 1.0, 1.0), Vec3::new(3.0, 6.0, 3.0)),
+            (Vec3::new(-6.0, 7.0, 8.0), Vec3::new(1.0, 1.0, 0.0), Vec3::new(-8.0, 5.0, 8.0)),
+            (Vec3::new(1.0, 1.0, 1.0), Vec3::new(1.0, 1.0, 1.0), Vec3::new(-5.0, -5.0, -5.0)),
+        ];
+
+        for (uv, n, expected) in data {
+            let actual = Vec3::reflect(&uv, &n);
+            assert_eq!(actual, expected);
+        }
+    }
+
+    #[test]
+    fn test_refract_01() {
+        let uv = Point3::new(1.0, 1.0, 0.0);
+        let n = Point3::new(-1.0, 0.0, 0.0);
+        let etai_over_etat = 1.0;
+        let expected = Point3::new(0.0, 1.0, 0.0);
+        let actual = Vec3::refract(&uv, &n, etai_over_etat);
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_refract_02() {
+        let uv = Point3::new(-2.0, -2.0, -2.0);
+        let n = Point3::new(1.0, 0.0, 0.0);
+        let etai_over_etat = 0.9;
+        let expected = Point3::new(-3.4079872407968907, -1.8, -1.8);
+        let actual = Vec3::refract(&uv, &n, etai_over_etat);
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_refract_03() {
+        let uv = Point3::new(-1.34, -2.32, 5.32);
+        let n = Point3::new(1.1, -0.45, 3.21);
+        let etai_over_etat = 1.5;
+        let expected = Point3::new(-115.6544941015172, 43.010929405166124, -323.65529642351834);
+        let actual = Vec3::refract(&uv, &n, etai_over_etat);
+        assert_eq!(actual, expected);
+    }
+}

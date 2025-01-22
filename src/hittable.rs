@@ -34,7 +34,9 @@ impl HitRecord {
 
     pub fn set_face_normal(&mut self, ray: &Ray) {
         self.face = if Vec3::dot(ray.direction(), &self.normal) < 0.0 { Face::Front } else { Face::Back };
-        self.normal = if self.face == Face::Front { self.normal.clone() } else {-(self.normal.clone()) };
+        if self.face == Face::Back { 
+            self.normal = -(self.normal.clone());
+        }
     }
 }
 
