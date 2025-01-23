@@ -1,4 +1,7 @@
 mod vec3;
+mod color;
+
+use color::Color;
 
 fn main() {
 
@@ -12,15 +15,10 @@ fn main() {
     for j in 0..image_height {
         eprint!("\rScanlines remaining: {}", image_height - j);
         for i in 0..image_width {
-            let r = i as f64 / (image_width - 1) as f64;
-            let g = j as f64 / (image_width - 1) as f64;
-            let b = 0.0;
-
-            let ir = (255.999 * r) as u8;
-            let ig = (255.999 * g) as u8;
-            let ib = (255.999 * b) as u8;
-
-            println!("{} {} {}", ir, ig, ib);
+            let color = Color::new(i as f64 / (image_width - 1) as f64,
+                                    j as f64 / (image_width - 1) as f64,
+                                    0.0);
+            color.write_color();
         }
     }
 
