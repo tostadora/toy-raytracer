@@ -40,6 +40,15 @@ impl Vec3 {
 
 }
 
+impl Add<Vec3> for &Vec3 {
+
+    type Output = Vec3;
+
+    fn add(self, v: Vec3) -> Vec3 {
+        Vec3::new(self.x + v.x, self.y + v.y, self.z + v.z)
+    }
+}
+
 impl Add<&Vec3> for &Vec3 {
 
     type Output = Vec3;
@@ -47,6 +56,19 @@ impl Add<&Vec3> for &Vec3 {
     fn add(self, v: &Vec3) -> Vec3 {
         Vec3::new(self.x + v.x, self.y + v.y, self.z + v.z)
     }
+}
+
+impl Sub<Vec3> for &Vec3 {
+
+    type Output = Vec3;
+
+    fn sub(self, v: Vec3) -> Vec3 {
+        Vec3::new(self.x - v.x,
+                    self.y - v.y,
+                    self.z - v.z,
+                    )
+    }
+
 }
 
 impl Sub<&Vec3> for &Vec3 {
@@ -62,12 +84,32 @@ impl Sub<&Vec3> for &Vec3 {
 
 }
 
+impl Mul<Vec3> for f64 {
+
+    type Output = Vec3;
+
+    fn mul(self, v: Vec3) -> Vec3 {
+        v * self
+    }
+
+}
+
 impl Mul<&Vec3> for f64 {
 
     type Output = Vec3;
 
     fn mul(self, v: &Vec3) -> Vec3 {
         v * self
+    }
+
+}
+
+impl Mul<f64> for Vec3 {
+
+    type Output = Vec3;
+
+    fn mul(self, t: f64) -> Vec3 {
+        Vec3::new(self.x * t, self.y * t, self.z * t)
     }
 
 }
@@ -82,6 +124,19 @@ impl Mul<f64> for &Vec3 {
 
 }
 
+impl Div<f64> for Vec3 {
+
+    type Output = Vec3;
+
+    fn div(self, t: f64) -> Vec3 {
+        Vec3::new(self.x / t,
+                    self.y / t,
+                    self.z / t,
+        )
+    }
+
+}
+
 impl Div<f64> for &Vec3 {
 
     type Output = Vec3;
@@ -91,6 +146,50 @@ impl Div<f64> for &Vec3 {
                     self.y / t,
                     self.z / t,
         )
+    }
+
+}
+
+impl Add<Vec3> for Vec3 {
+
+    type Output = Vec3;
+
+    fn add(self, v: Vec3) -> Vec3 {
+        Vec3::new(self.x + v.x, self.y + v.y, self.z + v.z)
+    }
+}
+
+impl Add<&Vec3> for Vec3 {
+
+    type Output = Vec3;
+
+    fn add(self, v: &Vec3) -> Vec3 {
+        Vec3::new(self.x + v.x, self.y + v.y, self.z + v.z)
+    }
+}
+
+impl Sub<Vec3> for Vec3 {
+
+    type Output = Vec3;
+
+    fn sub(self, v: Vec3) -> Vec3 {
+        Vec3::new(self.x - v.x,
+                    self.y - v.y,
+                    self.z - v.z,
+                    )
+    }
+
+}
+
+impl Sub<&Vec3> for Vec3 {
+
+    type Output = Vec3;
+
+    fn sub(self, v: &Vec3) -> Vec3 {
+        Vec3::new(self.x - v.x,
+                    self.y - v.y,
+                    self.z - v.z,
+                    )
     }
 
 }

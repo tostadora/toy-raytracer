@@ -6,11 +6,11 @@ pub type Color = Vec3;
 impl Color {
 
     pub fn write_color(&self) {
-        let ri = (255.999 * self.x) as u8;
-        let gi = (255.999 * self.y) as u8;
-        let bi = (255.999 * self.z) as u8;
+        let r = 255.0 * self.x;
+        let g = 255.0 * self.y;
+        let b = 255.0 * self.z;
 
-        println!("{} {} {}", ri, gi, bi);
+        println!("{} {} {}", r.floor(), g.floor(), b.floor());
     }
 
 }
