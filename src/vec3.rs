@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub, Mul, Div};
+use std::ops::{Add, Sub, Mul, Div, Neg};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Vec3 {
@@ -36,6 +36,26 @@ impl Vec3 {
 
     pub fn unit_vector(&self) -> Vec3 {
         self / self.length()
+    }
+
+}
+
+impl Neg for Vec3 {
+    
+    type Output = Vec3;
+
+    fn neg(self) -> Vec3 {
+        Vec3::new(-self.x, -self.y, -self.z)
+    }
+
+}
+
+impl Neg for &Vec3 {
+    
+    type Output = Vec3;
+
+    fn neg(self) -> Vec3 {
+        Vec3::new(-self.x, -self.y, -self.z)
     }
 
 }
