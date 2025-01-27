@@ -1,4 +1,7 @@
 use std::ops::{Add, Sub, Mul, Div, Neg};
+use rand::prelude::*;
+
+use crate::interval::Interval;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Vec3 {
@@ -36,6 +39,36 @@ impl Vec3 {
 
     pub fn unit_vector(&self) -> Vec3 {
         self / self.length()
+    }
+
+    pub fn random() -> Vec3 {
+        Vec3::new(random::<f64>(), random::<f64>(), random::<f64>())
+    }
+
+    pub fn random_interval(interval: Interval) -> Vec3 {
+        Vec3::new(thread_rng().gen_range(interval.min..interval.max), 
+                    thread_rng().gen_range(interval.min..interval.max),
+                    thread_rng().gen_range(interval.min..interval.max))
+    }
+
+    pub fn random_unit_vector() -> Vec3 {
+        loop {
+            let p = Self::random_interval(Interval::new(-1.0, 1.0));
+
+            if p.length_squared() <= 1.0 {
+                return p.unit_vector();
+            }
+        }
+    }
+
+    pub fn random_on_hemisphere(normal: &Vec3) -> Vec3 {
+        let on_unit_sphere = Vec3::random_unit_vector();
+
+        if Vec3::dot(&on_unit_sphere, normal) > 0.0 {
+            on_unit_sphere
+        } else {
+            -on_unit_sphere
+        }
     }
 
 }
