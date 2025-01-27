@@ -4,6 +4,7 @@ mod ray;
 mod hittable;
 mod sphere;
 mod hittable_list;
+mod interval;
 
 use vec3::{Vec3, Point3};
 use color::Color;
@@ -11,6 +12,7 @@ use ray::Ray;
 use hittable::{HitRecord, Hittable};
 use hittable_list::HittableList;
 use sphere::Sphere;
+use interval::Interval;
 
 fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> f64 {
     let oc = &center - &r.origin;
@@ -29,7 +31,7 @@ fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> f64 {
 
 fn ray_color(r: &Ray, world: &HittableList) -> Color {
     
-    match world.hit(&r, 0.0, f64::INFINITY) {
+    match world.hit(&r, Interval::new(0.0, f64::INFINITY)) {
         Some(hr) => 0.5 * (hr.normal + Color::new(1.0, 1.0, 1.0)),
         None => {
             let unit_direction = r.direction.unit_vector();
