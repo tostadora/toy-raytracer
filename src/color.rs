@@ -10,11 +10,19 @@ impl Color {
 
         let interval = Interval::new(0.0, 0.999);
 
-        let r = 256.0 * interval.clamp(self.x);
-        let g = 256.0 * interval.clamp(self.y);
-        let b = 256.0 * interval.clamp(self.z);
+        let r = 256.0 * interval.clamp(Color::linear_to_gamma(self.x));
+        let g = 256.0 * interval.clamp(Color::linear_to_gamma(self.y));
+        let b = 256.0 * interval.clamp(Color::linear_to_gamma(self.z));
 
         println!("{} {} {}", r.floor(), g.floor(), b.floor());
     }
 
+    fn linear_to_gamma(linear_component: f64) -> f64 {
+
+        if linear_component > 0.0 {
+            return linear_component.sqrt();
+        } else {
+            return 0.0;
+        }
+    }
 }
