@@ -1,4 +1,3 @@
-
 use crate::vec3::{Vec3, Point3};
 use crate::ray::Ray;
 
