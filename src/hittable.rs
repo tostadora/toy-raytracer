@@ -1,6 +1,9 @@
 use crate::vec3::{Vec3, Point3};
 use crate::ray::Ray;
 use crate::interval::Interval;
+use crate::material::Material;
+
+use std::sync::Arc;
 
 pub enum Face {
     Front,
@@ -10,6 +13,7 @@ pub enum Face {
 pub struct HitRecord {
     pub p: Point3,
     pub normal: Vec3,
+    pub material: Arc<dyn Material>,
     pub t: f64,
     pub face: Face,
 }
@@ -19,10 +23,11 @@ pub trait Hittable {
 }
 
 impl HitRecord {
-    pub fn new(p: Point3, normal: Vec3, t: f64, face: Face) -> HitRecord {
+    pub fn new(p: Point3, normal: Vec3, material: Arc<dyn Material>, t: f64, face: Face) -> HitRecord {
         HitRecord {
             p,
             normal,
+            material,
             t,
             face,
         }

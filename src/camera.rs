@@ -88,14 +88,18 @@ impl Camera {
 
     fn ray_color(r: &Ray, world: &HittableList, depth: u32) -> Color {
         
-        if depth == 0 {
+        if depth <= 0 {
             return Color::new(0.0, 0.0, 0.0);
         }
 
         match world.hit(&r, Interval::new(0.001, f64::INFINITY)) {
             Some(hr) => {
-                let direction = &hr.normal + Vec3::random_unit_vector();
-                0.5 * Self::ray_color(&Ray::new(hr.p, direction), &world, depth - 1)
+                match hr.material.scatter(&r, &hr) {
+                    Some((attenuation, scattered)) => {
+                        attenuation * &Self::ray_color(&scattered, &world, depth - 1)
+                    },
+                    None => Color::new(0.0, 0.0, 0.0),
+                }
             },
             None => {
                 let unit_direction = r.direction.unit_vector();

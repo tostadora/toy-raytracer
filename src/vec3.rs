@@ -71,6 +71,16 @@ impl Vec3 {
         }
     }
 
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-8_f64;
+
+        (self.x.abs() < s) && (self.y.abs() < s) && (self.z.abs() < s)
+    }
+
+    pub fn reflect(v: &Vec3, n: &Vec3) -> Vec3 {
+        v - (2.0 * n * Vec3::dot(&v, &n))
+    }
+
 }
 
 impl Neg for Vec3 {
@@ -133,6 +143,46 @@ impl Sub<&Vec3> for &Vec3 {
                     self.y - v.y,
                     self.z - v.z,
                     )
+    }
+
+}
+
+impl Mul<Vec3> for Vec3 {
+
+    type Output = Vec3;
+
+    fn mul(self, v: Vec3) -> Vec3 {
+        Vec3::new(self.x * v.x, self.y * v.y, self.z * v.z)
+    }
+
+}
+
+impl Mul<&Vec3> for Vec3 {
+
+    type Output = Vec3;
+
+    fn mul(self, v: &Vec3) -> Vec3 {
+        Vec3::new(self.x * v.x, self.y * v.y, self.z * v.z)
+    }
+
+}
+
+impl Mul<&Vec3> for &Vec3 {
+
+    type Output = Vec3;
+
+    fn mul(self, v: &Vec3) -> Vec3 {
+        Vec3::new(self.x * v.x, self.y * v.y, self.z * v.z)
+    }
+
+}
+
+impl Mul<Vec3> for &Vec3 {
+
+    type Output = Vec3;
+
+    fn mul(self, v: Vec3) -> Vec3 {
+        Vec3::new(self.x * v.x, self.y * v.y, self.z * v.z)
     }
 
 }
