@@ -41,14 +41,24 @@ impl Vec3 {
         self / self.length()
     }
 
+    pub fn random_double() -> f64 {
+        random::<f64>()
+    }
+
+    pub fn random_double_interval(interval: &Interval) -> f64 {
+        interval.min + (interval.max - interval.min) * Self::random_double()
+    }
+
     pub fn random() -> Vec3 {
-        Vec3::new(random::<f64>(), random::<f64>(), random::<f64>())
+        Vec3::new(Self::random_double(),
+                  Self::random_double(),
+                  Self::random_double())
     }
 
     pub fn random_interval(interval: Interval) -> Vec3 {
-        Vec3::new(thread_rng().gen_range(interval.min..interval.max), 
-                    thread_rng().gen_range(interval.min..interval.max),
-                    thread_rng().gen_range(interval.min..interval.max))
+        Vec3::new(Self::random_double_interval(&interval), 
+                  Self::random_double_interval(&interval),
+                  Self::random_double_interval(&interval))
     }
 
     pub fn random_unit_vector() -> Vec3 {
@@ -87,6 +97,19 @@ impl Vec3 {
         let r_out_parallel = -(1.0 - r_out_perp.length_squared()).abs().sqrt() * n;
 
         r_out_perp + r_out_parallel
+    }
+
+    pub fn random_in_unit_disk() -> Vec3 {
+        let interval = Interval::new(-1.0, 1.0);
+
+        loop {
+            let p = Self::new(Self::random_double_interval(&interval),
+                              Self::random_double_interval(&interval),
+                              0.0);
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
     }
 
 }

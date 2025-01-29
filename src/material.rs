@@ -3,8 +3,6 @@ use crate::ray::Ray;
 use crate::hittable::{HitRecord, Face};
 use crate::vec3::Vec3;
 
-use rand::prelude::*;
-
 pub trait Material {
     fn scatter(self: &Self, r_in: &Ray, hr: &HitRecord) -> Option<(Color, Ray)>;
 }
@@ -105,7 +103,7 @@ impl Material for Dielectric {
         let cos_theta = Vec3::dot(&(-&unit_direction), &hr.normal).min(1.0);
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
 
-        let direction = if (ri * sin_theta > 1.0) || (Self::reflectance(cos_theta, ri) > random::<f64>()) {
+        let direction = if (ri * sin_theta > 1.0) || (Self::reflectance(cos_theta, ri) > Vec3::random_double()) {
                             Vec3::reflect(&unit_direction, &hr.normal)
                         } else {
                             Vec3::refract(&unit_direction, &hr.normal, ri)
