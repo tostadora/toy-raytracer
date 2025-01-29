@@ -12,6 +12,7 @@ pub struct Camera {
     pub image_width: u32,
     pub samples_per_pixel: u32,
     pub max_depth: u32,
+    pub vfov: f64,
     image_height: u32,
     pixel_samples_scale: f64,
     center: Point3,
@@ -22,13 +23,15 @@ pub struct Camera {
 
 impl Camera {
 
-    pub fn new(aspect_ratio: f64, image_width: u32, samples_per_pixel: u32, max_depth: u32) -> Camera {
+    pub fn new(aspect_ratio: f64, image_width: u32, samples_per_pixel: u32, max_depth: u32, vfov: f64) -> Camera {
         let image_height: u32 = if image_width as f64 / aspect_ratio < 1.0 { 1 } else { (image_width as f64 / aspect_ratio) as u32 };
 
         // Camera
 
         let focal_length: f64 = 1.0;
-        let viewport_height: f64 = 2.0;
+        let theta = vfov.to_radians();
+        let h = (theta/2.0).tan();
+        let viewport_height: f64 = 2.0 * h * focal_length;
         let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
         let camera_center = Point3::new(0.0, 0.0, 0.0);
 
@@ -52,6 +55,7 @@ impl Camera {
             image_width: image_width,
             samples_per_pixel: samples_per_pixel,
             max_depth: max_depth,
+            vfov: vfov,
             image_height: image_height,
             pixel_samples_scale: 1.0 / samples_per_pixel as f64,
             center: camera_center,
