@@ -1,6 +1,6 @@
 use crate::color::Color;
 use crate::ray::Ray;
-use crate::hittable::HitRecord;
+use crate::hittable::{HitRecord, Face};
 use crate::vec3::Vec3;
 
 pub trait Material {
@@ -69,3 +69,39 @@ impl Material for Metal {
     }
 
 }
+
+pub struct Dielectric {
+    refraction_index: f64,
+}
+
+impl Dielectric {
+
+    pub fn new(refraction_index: f64) -> Dielectric {
+        Dielectric {
+            refraction_index,
+        }
+    }
+    
+}
+
+impl Material for Dielectric {
+
+    fn scatter(&self, r_in: &Ray, hr: &HitRecord) -> Option<(Color, Ray)> {
+        let attenuation = Color::new(1.0, 1.0, 1.0);
+
+        let ri = match hr.face {
+                    Face::Front => 1.0 / self.refraction_index,
+                    Face::Back => self.refraction_index,
+        };
+
+        let unit_direction = r_in.direction.unit_vector();
+        let refracted = Vec3::refract(&unit_direction, &hr.normal, ri);
+
+        let scattered = Ray::new(hr.p.clone(), refracted);
+
+        Some((attenuation, scattered))
+
+    }
+
+}
+
