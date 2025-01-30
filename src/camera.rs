@@ -5,6 +5,8 @@ use crate::ray::Ray;
 use crate::color::Color;
 use crate::interval::Interval;
 
+use image::{ImageBuffer, RgbImage, Rgb};
+
 pub struct Camera {
     pub aspect_ratio: f64,
     pub image_width: u32,
@@ -96,9 +98,7 @@ impl Camera {
 
     pub fn render(&self, world: &HittableList) {
 
-        println!("P3");
-        println!("{} {}", self.image_width, self.image_height);
-        println!("255");
+        let mut buffer: RgbImage = RgbImage::new(self.image_width, self.image_height);
 
         for j in 0..self.image_height {
             eprint!("\rScanlines remaining: {}", self.image_height - j);
@@ -110,10 +110,11 @@ impl Camera {
                     color = color + Self::ray_color(&r, &world, self.max_depth);
                 }
                 color = color * self.pixel_samples_scale;
-                color.write_color();
+                buffer.put_pixel(i, j, color.write_color());
             }
         }
 
+        let _ = buffer.save("img.png");
         eprintln!("Done");
     }
 
